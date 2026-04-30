@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const days = [
   {
@@ -431,8 +431,13 @@ const toolBadges = [
 export default function SDRWeeklyPlan() {
   const [activeDay, setActiveDay] = useState(0);
   const [expandedTask, setExpandedTask] = useState(null);
-  const [completedSteps, setCompletedSteps] = useState({});
-
+  const [completedSteps, setCompletedSteps] = useState(() => {
+  const saved = localStorage.getItem("sdr-plan-progress");
+  return saved ? JSON.parse(saved) : {};
+});
+useEffect(() => {
+  localStorage.setItem("sdr-plan-progress", JSON.stringify(completedSteps));
+}, [completedSteps]);
   const toggleStep = (taskIdx, stepIdx) => {
     const key = `${activeDay}-${taskIdx}-${stepIdx}`;
     setCompletedSteps(prev => ({ ...prev, [key]: !prev[key] }));
